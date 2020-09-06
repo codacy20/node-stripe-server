@@ -1,22 +1,27 @@
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-
-var app = express();
-
-app.use(logger("dev"));
+const express = require("express");
+const app = express();
+const { resolve } = require("path");
+// This is your real test secret API key.
+const stripe = require("stripe")(
+  "sk_test_51HMTkaKix1IQrXIBqDBHOQiuk2nqP6IjtgwbukH00GgteKkgAI44Q9mRpgn2RZpwiopHhyMSPfhqgMyv5yGAp4sU00UFXj2lL3"
+);
+app.use(express.static("."));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
-
-app.use("/", indexRouter);
-app.use("/users", usersRouter);
-
-var listener = app.listen(8080, function() {
-  console.log("Listening on port " + listener.address().port);
+const calculateOrderAmount = (items) => {
+  // Replace this constant with a calculation of the order's amount
+  // Calculate the order total on the server to prevent
+  // people from directly manipulating the amount on the client
+  return 1400;
+};
+app.post("/create-payment-intent", async (req, res) => {
+  const { items } = req.body;
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: calculateOrderAmount(items),
+    currency: "usd"
+  });
+  res.send({
+    clientSecret: paymentIntent.client_secret
+  });
 });
+app.listen(4242, () => console.log("Node server listening on port 4242!"));
