@@ -4,7 +4,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 var indexRouter = require("./routes/index");
-var stripeRouter = require("./routes/stripe");
+// var stripeRouter = require("./routes/stripe");
 
 var app = express();
 
@@ -15,7 +15,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
-app.use("/stripe", stripeRouter);
+// app.use("/stripe", stripeRouter);
 
 var listener = app.listen(8080, function () {
   console.log("Listening on port " + listener.address().port);
