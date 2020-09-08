@@ -2,12 +2,12 @@ FROM node:carbon-alpine as dist
 WORKDIR /tmp/
 ENV .env /
 COPY package*.json ./ 
-COPY src/ src/
+COPY routes/ routes/
+COPY public/ public/
 RUN npm install
-RUN npm run build
 
 # Bundle app source
 COPY . .
 
-EXPOSE 3000
+EXPOSE 8080
 CMD [ "npm", "run", "start" ]
